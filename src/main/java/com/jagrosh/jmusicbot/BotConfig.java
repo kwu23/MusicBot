@@ -96,8 +96,12 @@ public class BotConfig
             maxSeconds = config.getLong("maxtime");
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
-            spotifyClientId = config.getString("spotifyClientId");
-            spotifyClientSecret = config.getString("spotifyClientSecret");
+            try {
+                spotifyClientId = config.getString("spotifyClientId");
+                spotifyClientSecret = config.getString("spotifyClientSecret");
+            } catch (Exception e) {
+                // do nothing
+            }
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
