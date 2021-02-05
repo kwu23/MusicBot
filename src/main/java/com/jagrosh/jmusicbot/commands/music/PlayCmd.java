@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jmusicbot.commands.music;
 
+import com.jagrosh.jmusicbot.audio.SpotifyHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
@@ -30,10 +31,16 @@ import com.jagrosh.jmusicbot.commands.DJCommand;
 import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.PermissionException;
+import org.apache.hc.core5.http.ParseException;
 
 /**
  *
@@ -192,10 +199,29 @@ public class PlayCmd extends MusicCommand
         @Override
         public void noMatches()
         {
-            if(ytsearch)
-                m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" No results found for `"+event.getArgs()+"`.")).queue();
-            else
-                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true));
+            if(ytsearch) {
+                m.editMessage(FormatUtil.filter(event.getClient().getWarning() + " No results found for `" + event.getArgs() + "`.")).queue();
+            } else if(event.getArgs().contains("spotify")) {
+                if (event.getArgs().contains("playlist")) {
+                    try {
+                        List<String> playlistTitles = SpotifyHelper.getPlaylistTitles(event.getArgs(), bot.getConfig().getSpotifyClientId(), bot.getConfig().getSpotifyClientSecret());
+                        for (String playlistTitle : playlistTitles) {
+                            bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:" + playlistTitle, new ResultHandler(m, event, true));
+                        }
+                    } catch (ParseException | SpotifyWebApiException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (event.getArgs().contains("track")) {
+                    try {
+                        bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:" + SpotifyHelper.getSpotifySongTitle(event.getArgs(), bot.getConfig().getSpotifyClientId(), bot.getConfig().getSpotifyClientSecret()), new ResultHandler(m, event, true));
+                    } catch (ParseException | SpotifyWebApiException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else {
+                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:" + event.getArgs(), new ResultHandler(m, event, true));
+            }
         }
 
         @Override

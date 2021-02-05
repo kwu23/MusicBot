@@ -40,7 +40,7 @@ public class BotConfig
     
     private Path path = null;
     private String token, prefix, altprefix, helpWord, playlistsFolder,
-            successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji;
+            successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji, spotifyClientId, spotifyClientSecret;
     private boolean stayInChannel, songInGame, npImages, updatealerts, useEval, dbots;
     private long owner, maxSeconds;
     private OnlineStatus status;
@@ -96,6 +96,8 @@ public class BotConfig
             maxSeconds = config.getLong("maxtime");
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
+            spotifyClientId = config.getString("spotifyClientId");
+            spotifyClientSecret = config.getString("spotifyClientSecret");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -297,6 +299,14 @@ public class BotConfig
     public String getMaxTime()
     {
         return FormatUtil.formatTime(maxSeconds * 1000);
+    }
+
+    public String getSpotifyClientId() {
+        return spotifyClientId;
+    }
+
+    public String getSpotifyClientSecret() {
+        return spotifyClientSecret;
     }
     
     public boolean isTooLong(AudioTrack track)
