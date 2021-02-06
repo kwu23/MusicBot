@@ -86,6 +86,8 @@ public class JMusicBot
                                 RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
+
+        System.out.println("Starting KevinBot");
         
         // set up the command client
         CommandClientBuilder cb = new CommandClientBuilder()
