@@ -100,7 +100,6 @@ public class JMusicBot
                         new PingCommand(),
                         new SettingsCmd(bot),
                         
-                        new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new PlaylistsCmd(bot),
