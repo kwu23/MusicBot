@@ -105,7 +105,6 @@ public class PlayCmd extends MusicCommand
                             event.reply(loadingEmoji + " Loading... `[" + args + "]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:" + playlistTitle, new ResultHandler(m, event, true)));
                             first = false;
                         } else {
-                            System.out.println("hello");
                             new Thread(() -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:" + playlistTitle, new ResultHandler(event, true))).start();
                         }
                     }
@@ -147,6 +146,7 @@ public class PlayCmd extends MusicCommand
         
         private void loadSingle(AudioTrack track, AudioPlaylist playlist)
         {
+            System.gc();
             if(bot.getConfig().isTooLong(track) && message != null)
             {
                 message.editMessage(FormatUtil.filter(event.getClient().getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
@@ -250,6 +250,7 @@ public class PlayCmd extends MusicCommand
         @Override
         public void loadFailed(FriendlyException throwable)
         {
+            System.out.println(throwable.getMessage());
             if(throwable.severity==Severity.COMMON && message != null)
                 message.editMessage(event.getClient().getError()+" Error loading: "+throwable.getMessage()).queue();
             else if(message != null)
